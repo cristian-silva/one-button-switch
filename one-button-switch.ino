@@ -9,6 +9,8 @@ const char* mqttServer = "192.168.1.110"; // ip address of the MQTT server
 const int mqttPort = 1883; // port MQTT server
 const char* mqttUser = "mqttserver";  
 const char* mqttPassword = "mqttserver";
+char main_topic[] = "Luz_Blanca";
+char aux_topic[] = "uno_aux";
 
 // Pin of the relay is 5 on R1D1 WEMOS
 
@@ -19,7 +21,7 @@ int light = 5;
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-String recv_payload = "";  //
+char recv_payload[] = " ";  //
  
 void setup() {
  
@@ -56,13 +58,13 @@ void setup() {
 
   client.publish("log", "Luz blanca connected"); //Topic name
   
-  client.subscribe("Luz_Blanca");
+  client.subscribe(main_topic);
  
 }
  
 void callback(char* topic, byte* payload, unsigned int length) {
 
-  recv_payload = payload[0]-48;
+  recv_payload[0] = (char)payload[0];
  
   Serial.print("Message arrived in topic: ");
   Serial.println(topic);
@@ -80,28 +82,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void loop() {
   client.loop();
 
-  Serial.println(recv_payload);
-
-  if(recv_payload == "1"){
+  if(recv_payload[0] == '1'){
     digitalWrite(light, HIGH);
     Serial.println("Luz Blanca encendida");
     Serial.println(recv_payload);
-//    client.publish("Luz_Blanca", "1");
+    client.publish(aux_topic, "1");
     }
-    else if(recv_payload =="0"){
+    else if(recv_payload[0] == '0'){
       digitalWrite(light,LOW);
       Serial.println("Luz Blanca apagada");
       Serial.println(recv_payload);
-//      client.publish("Luz_Blanca", "0");
+      client.publish(aux_topic, "0");
       }
-      else if(recv_payload != "1" && recv_payload != "0" && recv_payload != ""){
+      else if(recv_payload[0] != '1' && recv_payload[0] != '0' && recv_payload[0] != ' '){
         Serial.println("Input no conocido");
         Serial.println(recv_payload);
         }
 
-  recv_payload = "";
-
-
-  
-
+  recv_payload[0] = ' ';
 }
