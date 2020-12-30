@@ -9,7 +9,7 @@ const char* mqttServer = "192.168.1.110"; // ip address of the MQTT server
 const int mqttPort = 1883; // port MQTT server
 const char* mqttUser = "mqttserver";  
 const char* mqttPassword = "mqttserver";
-char main_topic[] = "Luz_Blanca";
+char main_topic[] = "One_button";
 char aux_topic[] = "uno_aux";
 
 // Pin of the relay is 5 on R1D1 WEMOS
